@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Pulse Monitoring Project
+Resources:
+  #DynamoDB Streams specification
+  PulseDynamoStream:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: patientId
+          AttributeType: N
+        - AttributeName: timestamp
+          AttributeType: N
+      KeySchema:
+        - AttributeName: patientId
+          KeyType: HASH
+        - AttributeName: timestamp
+          KeyType: RANGE  
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
+
+  # Define the publisher Lambda function with permissions
+  PulseJumpAnaliszer:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      CodeUri: ./pulse-jump-analizer
+      Handler: telran.pulse_monitoring.pulseJumpAnalizer::handleRequest
+      Runtime: java17
+      Architectures:
+        - x86_64
+      Timeout: 30
+      MemorySize: 512
+      Events:
+        TableRecordChange:
+          Type: DynamoDB
+          Properties:
+            StartingPosition: LATEST
+            Stream: !GetAtt PulseDynamoStream.StreamArn
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Resource: '*'
+            Action:
+              - dynamodb:*
+  
+
+  

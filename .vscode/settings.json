@@ -1,3 +1,19 @@
 {
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+  "yaml.customTags": [
+    "!GetAtt scalar",
+    "!Ref scalar",
+    "!Sub scalar",
+    "!Join sequence",
+    "!If scalar",
+    "!And sequence",
+    "!Or sequence",
+    "!Not sequence",
+    "!Equals sequence",
+    "!FindInMap sequence",
+    "!ImportValue scalar",
+    "!Select sequence",
+    "!Split sequence",
+    "!GetAZs scalar"
+  ]
 }
