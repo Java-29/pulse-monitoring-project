@@ -1,11 +1,19 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Pulse Monitoring Project
+Globals:
+  Function:
+    Runtime: java17
+    Timeout: 180
+    Environment:
+      Variables:
+        TRESHOLD: "90"
 Resources:
   #DynamoDB Streams specification
   PulseDynamoStream:
     Type: 'AWS::DynamoDB::Table'
     Properties:
+      TableName: pulse-data
       AttributeDefinitions:
         - AttributeName: patientId
           AttributeType: N
@@ -28,7 +36,6 @@ Resources:
     Properties:
       CodeUri: ./pulse-jump-analizer
       Handler: telran.pulse_monitoring.pulseJumpAnalizer::handleRequest
-      Runtime: java17
       Architectures:
         - x86_64
       Timeout: 30

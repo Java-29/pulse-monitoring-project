@@ -15,7 +15,11 @@ public class pulseJumpAnalizer {
 	        LambdaLogger logger = context.getLogger();
 	        	event.getRecords().forEach(rec -> {
 	        		Map<String, AttributeValue>map = rec.getDynamodb().getNewImage();
-	        		int patientId = Integer.parseInt(map.get("patientId").getN()) ;
+
+					//====================================================
+					if(map == null) System.out.println("No new Image");
+					else if(rec.getEventName().equals("INSERT")){
+						int patientId = Integer.parseInt(map.get("patientId").getN()) ;
 	        		long timestamp = Long.parseLong(map.get("timestamp").getN());
 	        		int pulse = Integer.parseInt(map.get("pulse").getN());
 	        		
@@ -23,6 +27,13 @@ public class pulseJumpAnalizer {
 	        			logger.log(String.format("Warning! Pulse level higher then %d: PatientId: %d, timestamp: %d, pulse: %d\n",
 	        					TRESHOLD, patientId, timestamp, pulse));
 	        		}
+					
+					else {
+						System.out.println(rec.getEventName());
+					}
+					} 
+					else System.out.println(rec.getEventName());				
+	        		
 	        	});
 	    }
 
